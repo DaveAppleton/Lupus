@@ -1,0 +1,460 @@
+<HTML>
+
+<head>
+    <title>Lupine Memory Device</title>
+    <script src="inc/web3.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="inc/bootstrap.min.css">
+    <script src="inc/jquery.min.js"></script>
+    <script src="inc/bootstrap.min.js"></script>
+    <script>
+        function start() {
+
+            // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+            if (typeof web3 !== 'undefined') {
+                // Use Mist/MetaMask's provider
+                web3js = new Web3(web3.currentProvider);
+                return true;
+            } else {
+                web3 = new Web3();
+                //web3.setProvider(new web3.providers.HttpProvider('https://api.myetherapi.com/eth'));
+                web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io/Jt0sW1Y9QOVpoh2lDKCQ'));
+                return true;
+            }
+        }
+
+        start()
+        function correctNetwork() {
+            web3.version.getNetwork((err, netId) => {
+                switch (netId) {
+                    case "1":
+                        $("#answer").val('** DO NOT USE **\nThis is mainnet')
+                        break;
+                    case "2":
+                        $("#answer").val('** DO NOT USE **\nThis is the deprecated Morden test network.')
+                        break;
+                    case "3":
+                        $("#answer").val('** DO NOT USE **\nThis is the ropsten test network.')
+                        break;
+                    case "4":
+                        $("#answer").val('This is the Rinkeby test network.\n Please proceed.')
+                        break
+                    case "42":
+                        $("#answer").val('** DO NOT USE **\nThis is the Kovan test network.')
+                        break;
+                    default:
+                        $("#answer").val('** DO NOT USE **\nThis is an unknown network.')
+                        break;
+                }
+            })
+        };
+
+        var address = '0x1890daf6aa17ef958e593a1630d8df46a39bbf4b';
+        var abi = `[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "counter",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "balance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "romulus",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "usage_fee",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "lastQBlock",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "asker",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "nonce",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "answer",
+				"type": "string"
+			}
+		],
+		"name": "Remus",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "asker",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "nonce",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "question",
+				"type": "string"
+			}
+		],
+		"name": "Romulus",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "asker",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "nonce",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "question",
+				"type": "string"
+			}
+		],
+		"name": "Scooby",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "question",
+				"type": "string"
+			}
+		],
+		"name": "askRomulus",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"name": "_auth",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "question",
+				"type": "string"
+			}
+		],
+		"name": "askScoobyDoo",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newRate",
+				"type": "uint256"
+			}
+		],
+		"name": "setUsageRate",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "asker",
+				"type": "address"
+			},
+			{
+				"name": "question",
+				"type": "uint256"
+			},
+			{
+				"name": "answer",
+				"type": "string"
+			},
+			{
+				"name": "questionBlock",
+				"type": "uint256"
+			}
+		],
+		"name": "letRomulusReply",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]`;
+        let comments = ["I'm thinking", "It's quite a puzzle", "Hang on....", "No. That's not it.", "Now I need to start over"];
+        let pos = 0;
+        let wolf = web3.eth.contract(JSON.parse(abi)).at(address);
+
+        function comment() {
+            $("#answer").val(comments[pos++]);
+            if (pos >= comments.length) {
+                pos = 0;
+            }
+        }
+
+        function getLog() {
+            question = $("#question").val();
+            console.log(question);
+
+            wolf.askRomulus(question, { value: '100000000000000000' }, (err, result) => { window.setTimeout(getReceipt(result), 200000); }); // gets the tx hash
+            $('#askButton').prop('disabled', true)
+            $('#askButtonCode').prop('disabled', true)
+        }
+
+        function getCode() {
+            question = $("#code").val();
+            console.log(question);
+
+            wolf.askScoobyDoo(question, { value: '100000000000000000' }, (err, result) => { window.setTimeout(getReceipt(result), 200000); }); // gets the tx hash
+            $('#askButtonCode').prop('disabled', true)
+            $('#askButton').prop('disabled', true)
+        }
+
+        function getReceipt(txHash) {
+            comment();
+            var jqxhr = jQuery.getJSON("/checkTx", { "hash": txHash }, function (data) {
+                getAnswer(data.Src, data.Nonce, data.LastBlock);
+            })
+                .done(function () {
+                    console.log("success");
+                })
+                .fail(function () {
+                    if (jqxhr.status == 418) {
+                        window.setTimeout(getReceipt(txHash), 90000);
+                    } else {
+                        $("#answer").val("Very sorry - something went horribly wrong")
+                    }
+                })
+
+        }
+
+        function getAnswer(src, nonce, blk) {
+            comment();
+            var jqxhr = jQuery.getJSON("/checkAnswer", { "address": src, "nonce": nonce, "block": blk }, function (data) {
+                console.log(data);
+                $("#answer").val(data);
+                $('#askButton').prop('disabled', false);
+                $('#askButtonCode').prop('disabled', false);
+            })
+                .done(function () {
+                    console.log("success");
+                })
+                .fail(function () {
+                    if (jqxhr.status == 418) {
+                        window.setTimeout(getAnswer(src, nonce, blk), 90000);
+                    } else {
+                        $("#answer").val("Very sorry - something went horribly wrong")
+                    }
+                })
+
+        }
+
+        
+
+    </script>
+</head>
+
+<body>
+    <br/>
+    <br/>
+    <div class="container">
+        <hr>
+
+        <div class="col-md-6 col-md-offset-4">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h1>Ask The Oracle</h1>
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label>ETH Account</label>
+                        <input class="form-control" name="account" id="account" width=50 readonly></input>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label>balance</label>
+                    <input class="form-control" name="balance" id="balance" width=20 readonly></input>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="row">
+                    <img src="images/download-metamask-dark.png" class="img-thumbnail" id="mm" alt="Metamask" style="display:none;">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label>Question</label>
+                            <input class="form-control" name="question" id="question" width=50></input>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <button id="askButton" class="btn btn-primary" type="button" onclick="javascript:getLog();">Ask Romulus
+
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label>CODE</label>
+                            <input class="form-control" name="code" id="code" width=50></input>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <button id="askButtonCode" class="btn btn-primary" type="button" onclick="javascript:getCode();">Ask Remus
+
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <label>Answer</label>
+                <textarea class="form-control" rows="5" name=answer id="answer" readonly></textarea>
+                <!--input class="form-control" style="height:70px" name=answer id="answer" readonly></input-->
+            </div>
+
+        </div>
+
+    </div>
+</body>
+<script>
+    
+   
+    let e = window.web3.eth.defaultAccount;
+    $("#account").val(e);
+    window.web3.eth.getBalance(e, function (error, result) {
+        if (!error) {
+            web3.wei
+            $("#balance").val(web3.fromWei(result));
+        };
+    });
+    correctNetwork();
+</script>
+
+</html>
