@@ -1,0 +1,7 @@
+{
+    "CONTRACT_ADDRESS" : "0x1890daf6aa17ef958e593a1630d8df46a39bbf4b",
+    "IPC_HOST" : "https://rinkeby.infura.io/<your key>",
+    "Q1": "https://www.wolframalpha.com/api/v1/result?appid=<?>&i=",
+    "Q2": "https://www.wolframcloud.com/objects/<?>/APIs/WLinterp?q=",
+    "Q3": "https://www.wolframcloud.com/objects/<?>/APIs/general?expr="
+}
